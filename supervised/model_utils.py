@@ -250,9 +250,10 @@ def plot_optuna_study(study):
     """Plot Optuna optimization history and hyperparameter importance."""
     fig, axes = plt.subplots(1, 2, figsize=(16, 5))
 
-    # Optimization history
-    trial_numbers = [t.number for t in study.trials]
-    trial_values = [t.value for t in study.trials]
+    # Optimization history (exclude pruned/failed trials with value=None)
+    completed = [t for t in study.trials if t.value is not None]
+    trial_numbers = [t.number for t in completed]
+    trial_values = [t.value for t in completed]
     best_so_far = np.maximum.accumulate(trial_values)
 
     axes[0].scatter(trial_numbers, trial_values, alpha=0.3, s=15,
