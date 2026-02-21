@@ -54,7 +54,7 @@ class SeriesConfig:
         return op in self.feature_ops
 
 
-G7_COUNTRY_CODES = {
+COUNTRY_CODES = {
     "USA": {"iso2": "US", "iso3": "USA"},
     "Canada": {"iso2": "CA", "iso3": "CAN"},
     "UK": {"iso2": "GB", "iso3": "GBR"},
@@ -81,13 +81,16 @@ SERIES_CONFIG: dict[str, SeriesConfig] = {
     ),
     # Consumer Price Index, 2015=100, monthly
     # USA URL: https://fred.stlouisfed.org/series/USACPIALLMINMEI
+    # Publication lag: ~1 month (released 2-3 weeks after reference month)
     "cpi": SeriesConfig(
         suffix="CPIALLMINMEI",
         feature_ops="log_diff",
         custom_id={"Australia": "AUSCPALTT01IXOBSAQ"},  # Quartely, will ffill
+        publication_lag=1,
     ),
     # Unemployment Rate (%), Monthly, Seasonally Adj.
     # USA URL: https://fred.stlouisfed.org/series/LRHUTTTTUSM156S
+    # Publication lag: ~1 month (released first Friday of following month)
     # Lagged: Labor market conditions lag economic turning points
     "unemployment_rate": SeriesConfig(
         prefix="LRHUTTTT",
@@ -95,11 +98,13 @@ SERIES_CONFIG: dict[str, SeriesConfig] = {
         use_iso3=False,
         feature_ops="first_diff",
         lagged=True,
+        publication_lag=1,
     ),
     # Economic Policy Uncertainty Index, Monthly
     # USA URL: https://fred.stlouisfed.org/series/USEPUINDXM
     # Japan's FRED data is discontinued (2016); Australia is not on FRED.
     # Both loaded from local files. Source: https://policyuncertainty.com/
+    # Publication lag: ~1 month (news-based index, released with ~1 month delay)
     # Lagged: Policy uncertainty signals precede market stress
     "epu": SeriesConfig(
         suffix="EPUINDXM",
@@ -113,9 +118,11 @@ SERIES_CONFIG: dict[str, SeriesConfig] = {
         },
         feature_ops=["log_diff", "rolling_stats"],
         lagged=True,
+        publication_lag=1,
     ),
     # 10 Year Government Bond Interest Rates, Monthly
     # USA URL: https://fred.stlouisfed.org/series/IRLTLT01USM156N
+    # Publication lag: ~1 month (OECD monthly averages released with delay)
     # Lagged: Long-term rates reflect financial conditions
     "10_yr_yld": SeriesConfig(
         prefix="IRLTLT01",
@@ -123,11 +130,13 @@ SERIES_CONFIG: dict[str, SeriesConfig] = {
         use_iso3=False,
         feature_ops="first_diff",
         lagged=True,
+        publication_lag=1,
     ),
     # 3-Month Interbank Interest Rate, Monthly
     # USA URL: https://fred.stlouisfed.org/series/IR3TIB01USM156N
     # This is the interest rate that banks charge other banks for a 90-day loan
     # not using 3 month government bond yield as it's not available for all G7 countries
+    # Publication lag: ~1 month (OECD monthly averages released with delay)
     # Lagged: Short-term rates reflect monetary policy stance
     "3_mo_yld": SeriesConfig(
         prefix="IR3TIB01",
@@ -136,6 +145,7 @@ SERIES_CONFIG: dict[str, SeriesConfig] = {
         feature_ops="first_diff",
         custom_id={"Japan": "IR3TCD01JPM156N"},  # 3 month rate for CDs
         lagged=True,
+        publication_lag=1,
     ),
     # OECD based Recession Indicators, Monthly
     # USA URL: https://fred.stlouisfed.org/series/USAREC
@@ -146,16 +156,19 @@ SERIES_CONFIG: dict[str, SeriesConfig] = {
     ),
     # Industrial Activity Index, Monthly, Seasonally Adj.
     # USA URL: https://fred.stlouisfed.org/series/USAPRINTO01IXOBM
+    # Publication lag: ~2 months (released with significant delay)
     # Lagged: Industrial output tracks real economy momentum
     "ind_out": SeriesConfig(
         suffix="PROINDMISMEI",
         feature_ops="log_diff",
         lagged=True,
         custom_id={"Australia": "AUSPROINDQISMEI"},  # Quarterly
+        publication_lag=2,
     ),
     # Composite Consumer Confidence Amplitude, Monthly, Seasonally Adj.
     # USA URL: https://fred.stlouisfed.org/series/CSCICP03USM665S
     # Normal is 100 (amplitude-adjusted index)
+    # Publication lag: ~2 months (OECD composite, released with delay)
     # Lagged: Consumer sentiment is a leading indicator
     "comp_consumer_conf": SeriesConfig(
         prefix="CSCICP03",
@@ -163,11 +176,14 @@ SERIES_CONFIG: dict[str, SeriesConfig] = {
         use_iso3=False,
         feature_ops="amplitude_deviation",
         lagged=True,
+        publication_lag=2,
     ),
     # Car Registration for Passenger Cars, Monthly, Seasonally Adj.
     # USA URL: https://fred.stlouisfed.org/series/USASLRTCR03GPSAM
+    # Publication lag: ~1 month (released with ~1 month delay)
     "pcar_reg": SeriesConfig(
         suffix="SLRTCR03GPSAM",
+        publication_lag=1,
     ),
     # VIX - Daily data, aggregated to monthly via average
     # URL: https://fred.stlouisfed.org/series/VIXCLS
@@ -191,38 +207,46 @@ SERIES_CONFIG: dict[str, SeriesConfig] = {
     # Producer Price Index by Commodity: Special Indexes: Copper and Copper Products
     # Index: 1982=100, Monthly
     # URL: https://fred.stlouisfed.org/series/WPUSI019011
+    # Publication lag: ~1 month (PPI released ~2 weeks after reference month)
     "copper": SeriesConfig(
         prefix="WPUSI019011",
         use_iso3=False,
         is_global=True,
         feature_ops="log_diff",
         lagged=True,
+        publication_lag=1,
     ),
     # Proxy for Gold, Gold Spot Price is no longer available due to licensing from
     # the London Bullion Market Association
     # Producer Price Index for Jewelry (Gold and Platinum) and Silverware, Monthly
     # https://fred.stlouisfed.org/series/WPU159402
+    # Publication lag: ~1 month (PPI released ~2 weeks after reference month)
     "gps": SeriesConfig(
         prefix="WPU159402",
         use_iso3=False,
         is_global=True,
         feature_ops="log_diff",
+        publication_lag=1,
     ),
     # OECD: Leading Indicators: Composite Leading Indicator: Amplitude Adjusted, Monthly
     # URL: https://fred.stlouisfed.org/series/USALOLITOAASTSAM
+    # Publication lag: ~2 months (OECD CLI released with significant delay)
     # Lagged: Composite leading indicator designed to predict cycles
     "cli": SeriesConfig(
         suffix="LOLITOAASTSAM",
         feature_ops="amplitude_deviation",
         lagged=True,
+        publication_lag=2,
     ),
     # Sales: Retail Trade: Total Retail Trade: Volume, Growth Rate Previous Peroid, Monthly
     # URL: https://fred.stlouisfed.org/series/USASLRTTO01GPSAM
+    # Publication lag: ~2 months (released with significant delay)
     "retail_vol": SeriesConfig(
         suffix="SLRTTO01GPSAM",
-        feature_ops="log_diff",
+        feature_ops="first_diff",
         lagged=True,
         custom_id={"Australia": "SLRTTO01AUQ189S"},  # Quarterly
+        publication_lag=2,
     ),
     # Financial Market: Share Prices, Index 2015=100, Monthly
     # URL: https://fred.stlouisfed.org/series/SPASTT01USM661N
@@ -258,11 +282,11 @@ def build_series_id(indicator: str, country: str) -> str:
     """
     if indicator not in SERIES_CONFIG:
         raise ValueError(f"Unknown indicator: {indicator}")
-    if country not in G7_COUNTRY_CODES:
+    if country not in COUNTRY_CODES:
         raise ValueError(f"Unknown country: {country}")
 
     config = SERIES_CONFIG[indicator]
-    codes = G7_COUNTRY_CODES[country]
+    codes = COUNTRY_CODES[country]
 
     # Check for custom series ID first (bypasses pattern construction)
     if country in config.custom_id:
@@ -298,7 +322,7 @@ def build_series_dict(
         For global indicators, all countries map to the same series ID.
     """
     indicators = indicators or list(SERIES_CONFIG.keys())
-    countries = countries or list(G7_COUNTRY_CODES.keys())
+    countries = countries or list(COUNTRY_CODES.keys())
 
     series_ids_by_indicator = {}
 
