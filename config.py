@@ -85,7 +85,7 @@ SERIES_CONFIG: dict[str, SeriesConfig] = {
     "cpi": SeriesConfig(
         suffix="CPIALLMINMEI",
         feature_ops="log_diff",
-        custom_id={"Australia": "AUSCPALTT01IXOBSAQ"},  # Quartely, will ffill
+        custom_id={"Australia": "AUSCPALTT01IXOBSAQ"},  # Quarterly, will ffill
         publication_lag=1,
     ),
     # Unemployment Rate (%), Monthly, Seasonally Adj.

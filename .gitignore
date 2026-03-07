@@ -1,3 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE / Editor
+.cursor/
+.claude/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project artifacts
+data/lstm_optuna.db
+data/lstm_eval_checkpoint.pkl
+
+# Legacy files
 baseline_dataset.pkl
 baseline_dataset.csv
-__pycache__/config.cpython-313.pyc
+test.ipynb
+output.png
